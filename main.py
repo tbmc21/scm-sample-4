@@ -24,6 +24,15 @@ async def create_task(task: Task):
     tasks_db.append(task)
     return task
 
+# Adicionar após as rotas existentes
+@app.patch("/tasks/{task_id}/complete", response_model=Task)
+async def complete_task(task_id: int):
+    for i, task in enumerate(tasks_db):
+        if task.id == task_id:
+            tasks_db[i].completed = True
+            return tasks_db[i]
+    raise HTTPException(status_code=404, detail="Task not found")
+
 # Rota para listar todas as tarefas (GET)
 @app.get("/tasks/", response_model=List[Task])
 async def list_tasks():
